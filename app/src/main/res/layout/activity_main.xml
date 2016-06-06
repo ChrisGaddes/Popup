@@ -8,10 +8,25 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="williamhester.me.popupdrag.MainActivity">
+    tools:context="com.chrisgaddes.popupdrag.MainActivity">
 
-    <Button android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"/>
+    <Button android:id="@+id/btn_pt_1"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:text="Hello World!"
+        android:background="@drawable/dot"
+        android:layout_centerInParent="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="50dp"/>
+
+    <Button android:id="@+id/btn_pt_2"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:text="Hello World!"
+        android:background="@drawable/dot"
+        android:layout_centerInParent="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="50dp"
+
+        />
 </RelativeLayout>

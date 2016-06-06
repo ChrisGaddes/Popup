@@ -5,7 +5,7 @@ android {
     buildToolsVersion "22.0.1"
 
     defaultConfig {
-        applicationId "williamhester.me.popupdrag"
+        applicationId "com.chrisgaddes.popupdrag"
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 1

@@ -1,4 +1,4 @@
-package williamhester.me.popupdrag;
+package com.chrisgaddes.popupdrag;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

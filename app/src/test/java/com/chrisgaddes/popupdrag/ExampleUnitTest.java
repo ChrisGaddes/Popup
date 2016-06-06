@@ -1,4 +1,4 @@
-package williamhester.me.popupdrag;
+package com.chrisgaddes.popupdrag;
 
 import org.junit.Test;
 
