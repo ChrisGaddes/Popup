@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.PopupWindow;
+import android.content.Intent;
 
 public class MainActivity extends AppCompatActivity { // implements View.OnTouchListener {
 
@@ -26,6 +27,13 @@ public class MainActivity extends AppCompatActivity { // implements View.OnTouch
     //MyTouchListener touchListener = new MyTouchListener();
 
 
+
+
+
+
+
+
+
     // TODO Learn how to draw in Canvas
     // TODO
 
@@ -34,6 +42,19 @@ public class MainActivity extends AppCompatActivity { // implements View.OnTouch
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+
+        findViewById(R.id.btn_load_second_activity).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SecondActivity.class);
+                startActivity(intent);
+                //startActivity(SecondActivity.newIntent(MainActivity.this));
+            }
+        });
+
+
 
         final View popupContent = getLayoutInflater().inflate(R.layout.popup_main, null);
 

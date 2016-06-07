@@ -26,7 +26,13 @@
         android:background="@drawable/dot"
         android:layout_centerInParent="true"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="50dp"
+        android:layout_marginRight="50dp" />
 
-        />
+    <Button
+        android:id="@+id/btn_load_second_activity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Next"
+        android:textAllCaps="false"/>
+
 </RelativeLayout>
