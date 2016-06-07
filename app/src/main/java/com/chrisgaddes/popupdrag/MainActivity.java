@@ -11,9 +11,24 @@ import android.widget.Button;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity { // implements View.OnTouchListener {
 
     private static final String TAG = "MainActivity";
+
+//    void initialization(){
+//        Button btn_1,
+//        final Button b = (Button) findViewById(R.id.btn_pt_1);
+//        final Button b = (Button) findViewById(R.id.btn_pt_2);
+//
+//    }
+
+
+    //MyTouchListener touchListener = new MyTouchListener();
+
+
+    // TODO Learn how to draw in Canvas
+    // TODO
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,21 +51,16 @@ public class MainActivity extends AppCompatActivity {
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        int[] bLoc = new int[2];
-                        b.getLocationOnScreen(bLoc);
-                        Rect bRect = new Rect(bLoc[0], bLoc[1],
-                                bLoc[0] + b.getWidth(), bLoc[1] + b.getHeight());
-                        int center_bRect_x = bRect.centerX();
-                        int center_bRect_y = bRect.centerY();
-
-                        int offset_center_bRect_x = center_bRect_x - dim_popup_window / 2;
-                        int offset_center_bRect_y = center_bRect_y - dim_popup_window / 2;
-
-                        Log.d(TAG, "Center of button, x:" + offset_center_bRect_x);
-                        Log.d(TAG, "Center of button, y:" + offset_center_bRect_y);
-                        window.showAtLocation(v, Gravity.NO_GRAVITY, offset_center_bRect_x, offset_center_bRect_y);
+                        OnPtBtnActionDown(v, b, dim_popup_window, window);
                         break;
                     case MotionEvent.ACTION_UP:
+
+                        //TODO Set it up so that the buttons increment btn_[layout#]_[button#]
+                        //TODO move this out of onCreate and make it dynamic so that it doesn't matter how many buttons there are http://stackoverflow.com/questions/7048470/easy-way-to-setonclicklistener-on-all-activity-buttons
+
+
+                        //TODO put these all in an array
+
                         Button b1 = (Button) popupContent.findViewById(R.id.btn_1);
                         Button b2 = (Button) popupContent.findViewById(R.id.btn_2);
                         Button b3 = (Button) popupContent.findViewById(R.id.btn_3);
@@ -66,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
 
 
                         //int[] center_b1Rect = new int[]{b1Rect.centerX(), b1Rect.centerY()};
+
+                        // TODO COnsolidate this so that it assigns new variables
 
                         int[] b2Location = new int[2];
                         b2.getLocationOnScreen(b2Location);
@@ -90,6 +102,8 @@ public class MainActivity extends AppCompatActivity {
                         if (b1Rect.contains((int) event.getRawX(), (int) event.getRawY())) {
                             Log.d("MainActivty", "Released on Button1");
                             Toast.makeText(MainActivity.this, "Released on Button1", Toast.LENGTH_SHORT).show();
+                            Snackbar.make(v, "Welcome to SwA", Snackbar.LENGTH_LONG).show();
+
                         } else if (b2Rect.contains((int) event.getRawX(), (int) event.getRawY())) {
                             Log.d("MainActivty", "Released on Button2");
                             Toast.makeText(MainActivity.this, "Released on Button2", Toast.LENGTH_SHORT).show();
@@ -113,5 +127,21 @@ public class MainActivity extends AppCompatActivity {
                 return v.onTouchEvent(event);
             }
         });
+    }
+
+    private void OnPtBtnActionDown(View v, Button b, int dim_popup_window, PopupWindow window) {
+        int[] bLoc = new int[2];
+        b.getLocationOnScreen(bLoc);
+        Rect bRect = new Rect(bLoc[0], bLoc[1],
+                bLoc[0] + b.getWidth(), bLoc[1] + b.getHeight());
+        int center_bRect_x = bRect.centerX();
+        int center_bRect_y = bRect.centerY();
+
+        int offset_center_bRect_x = center_bRect_x - dim_popup_window / 2;
+        int offset_center_bRect_y = center_bRect_y - dim_popup_window / 2;
+
+        Log.d(TAG, "Center of button, x:" + offset_center_bRect_x);
+        Log.d(TAG, "Center of button, y:" + offset_center_bRect_y);
+        window.showAtLocation(v, Gravity.NO_GRAVITY, offset_center_bRect_x, offset_center_bRect_y);
     }
 }
