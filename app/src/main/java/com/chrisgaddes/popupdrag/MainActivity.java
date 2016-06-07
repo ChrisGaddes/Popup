@@ -2,6 +2,7 @@ package com.chrisgaddes.popupdrag;
 
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
@@ -9,7 +10,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.PopupWindow;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity { // implements View.OnTouchListener {
 
@@ -101,24 +101,28 @@ public class MainActivity extends AppCompatActivity { // implements View.OnTouch
 
                         if (b1Rect.contains((int) event.getRawX(), (int) event.getRawY())) {
                             Log.d("MainActivty", "Released on Button1");
-                            Toast.makeText(MainActivity.this, "Released on Button1", Toast.LENGTH_SHORT).show();
-                            Snackbar.make(v, "Welcome to SwA", Snackbar.LENGTH_LONG).show();
+                            // Toast.makeText(MainActivity.this, "Released on Button1", Toast.LENGTH_SHORT).show();
+                            Snackbar.make(v, "Released on Button 1", Snackbar.LENGTH_SHORT).show();
 
                         } else if (b2Rect.contains((int) event.getRawX(), (int) event.getRawY())) {
                             Log.d("MainActivty", "Released on Button2");
-                            Toast.makeText(MainActivity.this, "Released on Button2", Toast.LENGTH_SHORT).show();
+                            Snackbar.make(v, "Released on Button 2", Snackbar.LENGTH_SHORT).show();
+
                         } else if (b3Rect.contains((int) event.getRawX(), (int) event.getRawY())) {
                             Log.d("MainActivty", "Released on Button3");
-                            Toast.makeText(MainActivity.this, "Released on Button3", Toast.LENGTH_SHORT).show();
+                            Snackbar.make(v, "Released on Button 3", Snackbar.LENGTH_SHORT).show();
+
                         } else if (b4Rect.contains((int) event.getRawX(), (int) event.getRawY())) {
                             Log.d("MainActivty", "Released on Button4");
-                            Toast.makeText(MainActivity.this, "Released on Button4", Toast.LENGTH_SHORT).show();
+                            Snackbar.make(v, "Released on Button 4", Snackbar.LENGTH_SHORT).show();
+
                         } else if (b5Rect.contains((int) event.getRawX(), (int) event.getRawY())) {
                             Log.d("MainActivty", "Released on Moment");
-                            Toast.makeText(MainActivity.this, "Released on Moment", Toast.LENGTH_SHORT).show();
+                            Snackbar.make(v, "Released on Moment", Snackbar.LENGTH_SHORT).show();
+
                         } else {
                             Log.d("MainActivity", "Didn't drag to a button");
-                            Toast.makeText(MainActivity.this, "Tap and hold to select button", Toast.LENGTH_SHORT).show();
+                            Snackbar.make(v, "Tap and hold to select button", Snackbar.LENGTH_LONG).show();
                         }
 
                         window.dismiss();
