@@ -61,36 +61,55 @@ public class MainActivity extends AppCompatActivity { // implements View.OnTouch
                         float[] loc_raw_touch = {event.getRawX(), event.getRawY()};
 
 
+                        int num_btns = 4;
 
                         // virtual location of "btn_1"
-                        int[] arr_btns_x = new int[2];
-                        int[] arr_btns_y = new int[2];
+                        int[] arr_btns_x = new int[num_btns];
+                        int[] arr_btns_y = new int[num_btns];
 
-                        arr_btns_x[0] = 500;
-                        arr_btns_y[0] = 500;
 
-                        arr_btns_x[1] = 300;
-                        arr_btns_y[1] = 300;
+                        // Get the screen's density scale
+                        //final float scale = getResources().getDisplayMetrics().density;
+// Convert the dps to pixels, based on density scale
+                      //  mGestureThreshold = (int) (GESTURE_THRESHOLD_DP * scale + 0.5f);
+
+// Use mGestureThreshold as a distance in pixels...
+
+
+
+                        arr_btns_x[0] = 226;
+                        arr_btns_y[0] = 865;
+
+                        arr_btns_x[1] = 230;
+                        arr_btns_y[1] = 1817;
+
+                        arr_btns_x[2] = 1250;
+                        arr_btns_y[2] = 1820;
 
                         int len_arr_btns = arr_btns_x.length;
 
                         //TODO convert px to dp
                         // width and height of buttons
-                        final int btn_dim = 100;
+                        final int btn_dim = 300;
 
 
-                        // this rect is the button
-                        Rect rect_btn_1_spot = new Rect(arr_btns_x[0] - btn_dim / 2, arr_btns_y[0] - btn_dim / 2,
-                                arr_btns_x[0] + btn_dim / 2, arr_btns_y[0] + btn_dim / 2);
+                        for (int i = 0; i < len_arr_btns; i++) {
 
-                        Log.d(TAG, "Rectangle Coordinates" + rect_btn_1_spot);
+                            // this rect is the button
 
-                        if (rect_btn_1_spot.contains((int) event.getRawX(), (int) event.getRawY())) {
-                            Snackbar.make(v, "Clicked on button in spot", Snackbar.LENGTH_SHORT).show();
-                            OnPtBtnActionDown(v, dim_popup_window, window, loc_raw_touch);
-                        } else {
-                            // do stuff
+                            Rect rect_btn_1_spot = new Rect(arr_btns_x[i] - btn_dim / 2, arr_btns_y[i] - btn_dim / 2,
+                                    arr_btns_x[i] + btn_dim / 2, arr_btns_y[i] + btn_dim / 2);
+                            Log.d(TAG, "Rectangle Coordinates" + rect_btn_1_spot);
+
+                            if (rect_btn_1_spot.contains((int) event.getRawX(), (int) event.getRawY())) {
+                                Snackbar.make(v, "Clicked on button in spot", Snackbar.LENGTH_SHORT).show();
+                                OnPtBtnActionDown(v, dim_popup_window, window, loc_raw_touch);
+
+                            } else {
+                                // do stuff
+                            }
                         }
+
 
                         Log.d(TAG, "Point clicked, x:" + loc_raw_touch[0]);
                         Log.d(TAG, "Point clicked, y:" + loc_raw_touch[1]);

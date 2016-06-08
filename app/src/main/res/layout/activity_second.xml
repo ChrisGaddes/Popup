@@ -1,24 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/lyt_linearlayout_second_activity">
 
-
+<Button
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    />
 
 
     <ImageView
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        android:background="@drawable/fbd_1"
+        android:id="@+id/DrawingImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
         />
-
-    <Button
-        android:id="@+id/btn_act2_1"
+    <FrameLayout
+        android:id="@+id/FlashBarLayout"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-
-
-</RelativeLayout>
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="72dp">
+        <!-- flash bar content -->
+    </FrameLayout>
+    <!-- Last loaded time layout -->
+    <TextView
+        android:id="@+id/UpdateTimeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|right"
+        android:layout_marginTop="4dp"
+        android:layout_marginRight="4dp" />
+</FrameLayout>
