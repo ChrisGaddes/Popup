@@ -1,5 +1,6 @@
 package com.chrisgaddes.popupdrag;
 
+import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -10,39 +11,18 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.PopupWindow;
-import android.content.Intent;
 
 public class MainActivity extends AppCompatActivity { // implements View.OnTouchListener {
 
     private static final String TAG = "MainActivity";
 
-//    void initialization(){
-//        Button btn_1,
-//        final Button b = (Button) findViewById(R.id.btn_pt_1);
-//        final Button b = (Button) findViewById(R.id.btn_pt_2);
-//
-//    }
-
-
-    //MyTouchListener touchListener = new MyTouchListener();
-
-
-
-
-
-
-
-
 
     // TODO Learn how to draw in Canvas
-    // TODO
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
 
         findViewById(R.id.btn_load_second_activity).setOnClickListener(new View.OnClickListener() {
@@ -53,7 +33,6 @@ public class MainActivity extends AppCompatActivity { // implements View.OnTouch
                 //startActivity(SecondActivity.newIntent(MainActivity.this));
             }
         });
-
 
 
         final View popupContent = getLayoutInflater().inflate(R.layout.popup_main, null);
@@ -75,7 +54,41 @@ public class MainActivity extends AppCompatActivity { // implements View.OnTouch
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        OnPtBtnActionDown(v, b, dim_popup_window, window);
+
+                        // TODO check if button is at a point first
+
+                        // gets location of touch
+                        float[] loc_raw_touch = {event.getRawX(), event.getRawY()};
+
+
+
+                        // virtual location of "btn_1"
+                        int[] btn_1_spot = new int[2];
+                       btn_1_spot[0] = 712;
+                       btn_1_spot[1] = 439;
+
+
+                        //TODO convert px to dp
+                        // width and height of buttons
+                        final int btn_dim = 100;
+
+
+                        // this rect is the button
+                        Rect rect_btn_1_spot = new Rect(btn_1_spot[0] - btn_dim / 2, btn_1_spot[1] - btn_dim / 2,
+                                btn_1_spot[0] + btn_dim / 2, btn_1_spot[1] + btn_dim / 2);
+
+                        Log.d(TAG, "Rectangle Coordinates" + rect_btn_1_spot);
+
+                        if (rect_btn_1_spot.contains((int) event.getRawX(), (int) event.getRawY())) {
+                            Snackbar.make(v, "Clicked on button in spot", Snackbar.LENGTH_SHORT).show();
+                            OnPtBtnActionDown(v, dim_popup_window, window, loc_raw_touch);
+                        } else {
+                            // do stuff
+                        }
+
+                        Log.d(TAG, "Point clicked, x:" + loc_raw_touch[0]);
+                        Log.d(TAG, "Point clicked, y:" + loc_raw_touch[1]);
+
                         break;
                     case MotionEvent.ACTION_UP:
 
@@ -104,7 +117,7 @@ public class MainActivity extends AppCompatActivity { // implements View.OnTouch
 
                         //int[] center_b1Rect = new int[]{b1Rect.centerX(), b1Rect.centerY()};
 
-                        // TODO COnsolidate this so that it assigns new variables
+                        // TODO Consolidate this so that it assigns new variables
 
 
                         // TODO instead of reading button pressed, it it will read from a database and Rect will be set to a default size
@@ -165,19 +178,15 @@ public class MainActivity extends AppCompatActivity { // implements View.OnTouch
         });
     }
 
-    private void OnPtBtnActionDown(View v, Button b, int dim_popup_window, PopupWindow window) {
-        int[] bLoc = new int[2];
-        b.getLocationOnScreen(bLoc);
-        Rect bRect = new Rect(bLoc[0], bLoc[1],
-                bLoc[0] + b.getWidth(), bLoc[1] + b.getHeight());
-        int center_bRect_x = bRect.centerX();
-        int center_bRect_y = bRect.centerY();
+    private void OnPtBtnActionDown(View v, int dim_popup_window, PopupWindow window, float loc_raw_touch[]) {
 
-        int offset_center_bRect_x = center_bRect_x - dim_popup_window / 2;
-        int offset_center_bRect_y = center_bRect_y - dim_popup_window / 2;
+        int offset_center_bRect_x = (int) loc_raw_touch[0] - dim_popup_window / 2;
+        int offset_center_bRect_y = (int) loc_raw_touch[1] - dim_popup_window / 2;
 
         Log.d(TAG, "Center of button, x:" + offset_center_bRect_x);
         Log.d(TAG, "Center of button, y:" + offset_center_bRect_y);
+
+        // TODO change location of this popup to center of button pressed in database
         window.showAtLocation(v, Gravity.NO_GRAVITY, offset_center_bRect_x, offset_center_bRect_y);
     }
 }
