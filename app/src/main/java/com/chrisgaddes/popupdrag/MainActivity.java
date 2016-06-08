@@ -64,6 +64,9 @@ public class MainActivity extends AppCompatActivity { // implements View.OnTouch
 
         //final PopupWindow window = new PopupWindow(popupContent, ViewGroup.LayoutParams.WRAP_CONTENT,
         //ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        // b is the name of the button that
+
         final Button b = (Button) findViewById(R.id.btn_pt_1);
 
         if (b == null) return;
@@ -79,8 +82,11 @@ public class MainActivity extends AppCompatActivity { // implements View.OnTouch
                         //TODO Set it up so that the buttons increment btn_[layout#]_[button#]
                         //TODO move this out of onCreate and make it dynamic so that it doesn't matter how many buttons there are http://stackoverflow.com/questions/7048470/easy-way-to-setonclicklistener-on-all-activity-buttons
 
+                        // TODO http://stackoverflow.com/questions/21872464/get-button-coordinates-and-detect-if-finger-is-over-them-android
 
                         //TODO put these all in an array
+
+                        // Initialize popup buttons
 
                         Button b1 = (Button) popupContent.findViewById(R.id.btn_1);
                         Button b2 = (Button) popupContent.findViewById(R.id.btn_2);
@@ -99,6 +105,11 @@ public class MainActivity extends AppCompatActivity { // implements View.OnTouch
                         //int[] center_b1Rect = new int[]{b1Rect.centerX(), b1Rect.centerY()};
 
                         // TODO COnsolidate this so that it assigns new variables
+
+
+                        // TODO instead of reading button pressed, it it will read from a database and Rect will be set to a default size
+
+                        // TODO use canvas to draw arrows at correct places when pressed
 
                         int[] b2Location = new int[2];
                         b2.getLocationOnScreen(b2Location);
