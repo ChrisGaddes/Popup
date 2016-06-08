@@ -63,10 +63,16 @@ public class MainActivity extends AppCompatActivity { // implements View.OnTouch
 
 
                         // virtual location of "btn_1"
-                        int[] btn_1_spot = new int[2];
-                       btn_1_spot[0] = 712;
-                       btn_1_spot[1] = 439;
+                        int[] arr_btns_x = new int[2];
+                        int[] arr_btns_y = new int[2];
 
+                        arr_btns_x[0] = 500;
+                        arr_btns_y[0] = 500;
+
+                        arr_btns_x[1] = 300;
+                        arr_btns_y[1] = 300;
+
+                        int len_arr_btns = arr_btns_x.length;
 
                         //TODO convert px to dp
                         // width and height of buttons
@@ -74,8 +80,8 @@ public class MainActivity extends AppCompatActivity { // implements View.OnTouch
 
 
                         // this rect is the button
-                        Rect rect_btn_1_spot = new Rect(btn_1_spot[0] - btn_dim / 2, btn_1_spot[1] - btn_dim / 2,
-                                btn_1_spot[0] + btn_dim / 2, btn_1_spot[1] + btn_dim / 2);
+                        Rect rect_btn_1_spot = new Rect(arr_btns_x[0] - btn_dim / 2, arr_btns_y[0] - btn_dim / 2,
+                                arr_btns_x[0] + btn_dim / 2, arr_btns_y[0] + btn_dim / 2);
 
                         Log.d(TAG, "Rectangle Coordinates" + rect_btn_1_spot);
 
@@ -91,9 +97,6 @@ public class MainActivity extends AppCompatActivity { // implements View.OnTouch
 
                         break;
                     case MotionEvent.ACTION_UP:
-
-                        //TODO Set it up so that the buttons increment btn_[layout#]_[button#]
-                        //TODO move this out of onCreate and make it dynamic so that it doesn't matter how many buttons there are http://stackoverflow.com/questions/7048470/easy-way-to-setonclicklistener-on-all-activity-buttons
 
                         // TODO http://stackoverflow.com/questions/21872464/get-button-coordinates-and-detect-if-finger-is-over-them-android
 
@@ -113,16 +116,6 @@ public class MainActivity extends AppCompatActivity { // implements View.OnTouch
                         b1.getLocationOnScreen(b1Location);
                         Rect b1Rect = new Rect(b1Location[0], b1Location[1],
                                 b1Location[0] + b1.getWidth(), b1Location[1] + b1.getHeight());
-
-
-                        //int[] center_b1Rect = new int[]{b1Rect.centerX(), b1Rect.centerY()};
-
-                        // TODO Consolidate this so that it assigns new variables
-
-
-                        // TODO instead of reading button pressed, it it will read from a database and Rect will be set to a default size
-
-                        // TODO use canvas to draw arrows at correct places when pressed
 
                         int[] b2Location = new int[2];
                         b2.getLocationOnScreen(b2Location);
