@@ -17,6 +17,8 @@ import android.widget.ImageView;
  */
 public class SecondActivity extends AppCompatActivity {
 
+//    private TextView textViewMessage,textViewPerson;
+
     private static final String TAG = "SecondActivity";
 
     ImageView drawingImageView;
@@ -55,7 +57,15 @@ public class SecondActivity extends AppCompatActivity {
         Log.d(TAG, "Height is: " + height);
         Log.d(TAG, "Width is: " + width);
 
+
+//        String message = getIntent().getStringExtra("sampleKey");
+        //textViewMessage.setText(message);
+
+//        Snackbar.make(findViewById(R.id.lyt_linearlayout_second_activity), "Message is" + message, Snackbar.LENGTH_SHORT).show();
+
         Snackbar.make(findViewById(R.id.lyt_linearlayout_second_activity), "Height is" + width, Snackbar.LENGTH_SHORT).show();
+
+
 
         // Height is 2392
         // width is 1440

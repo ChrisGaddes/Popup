@@ -19,10 +19,10 @@
         </activity>
         <activity android:name=".MainActivity" />
 
-        <activity android:name=".SecondActivity">
+        <activity android:name=".SecondActivity"
+            android:label="Second Activity Page"
+            />
 
-
-        </activity>
 
     </application>
 

@@ -25,6 +25,8 @@ public class MainActivity extends AppCompatActivity { // implements View.OnTouch
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+//        final Intent pIntent = new Intent(MainActivity.this, SecondActivity.class);
+
         RelativeLayout mmain_activity_Relative_Layout = (RelativeLayout) findViewById(R.id.main_activity_Relative_Layout);
 
         findViewById(R.id.btn_load_second_activity).setOnClickListener(new View.OnClickListener() {
@@ -41,7 +43,7 @@ public class MainActivity extends AppCompatActivity { // implements View.OnTouch
         final View popupContent = getLayoutInflater().inflate(R.layout.popup_main, mmain_activity_Relative_Layout, false);
 
         // set dimension of popup window. The xml file is set to match parent
-        final int dim_popup_window = 700;
+        final int dim_popup_window = 500; //TODO change this to relative size
         final PopupWindow window = new PopupWindow(popupContent, dim_popup_window, dim_popup_window);
 
         //final PopupWindow window = new PopupWindow(popupContent, ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -53,144 +55,195 @@ public class MainActivity extends AppCompatActivity { // implements View.OnTouch
 
         if (b == null) return;
         b.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
+                                 @Override
+                                 public boolean onTouch(View v, MotionEvent event) {
+                                     switch (event.getAction()) {
+                                         case MotionEvent.ACTION_DOWN:
 
-                        // TODO check if button is at a point first
+                                             // TODO check if button is at a point first
 
-                        // gets location of touch
-                        float[] loc_raw_touch = {event.getRawX(), event.getRawY()};
-
-
-                        int num_btns = 4;
-
-                        // virtual location of "btn_1"
-                        int[] arr_btns_x = new int[num_btns];
-                        int[] arr_btns_y = new int[num_btns];
+                                             // gets location of touch
+                                             float[] loc_raw_touch = {event.getRawX(), event.getRawY()};
 
 
-                        // Get the screen's density scale
-                        //final float scale = getResources().getDisplayMetrics().density;
+                                             int num_btns = 4;
+
+                                             // virtual location of "btn_1"
+                                             int[] arr_btns_x = new int[num_btns];
+                                             int[] arr_btns_y = new int[num_btns];
+
+
+                                             // Get the screen's density scale
+                                             //final float scale = getResources().getDisplayMetrics().density;
 // Convert the dps to pixels, based on density scale
-                      //  mGestureThreshold = (int) (GESTURE_THRESHOLD_DP * scale + 0.5f);
+                                             //  mGestureThreshold = (int) (GESTURE_THRESHOLD_DP * scale + 0.5f);
 
 // Use mGestureThreshold as a distance in pixels...
 
 
+                                             arr_btns_x[0] = 226;
+                                             arr_btns_y[0] = 865;
 
-                        arr_btns_x[0] = 226;
-                        arr_btns_y[0] = 865;
+                                             arr_btns_x[1] = 230;
+                                             arr_btns_y[1] = 1817;
 
-                        arr_btns_x[1] = 230;
-                        arr_btns_y[1] = 1817;
-
-                        arr_btns_x[2] = 1250;
-                        arr_btns_y[2] = 1820;
-
-                        int len_arr_btns = arr_btns_x.length;
-
-                        //TODO convert px to dp
-                        // width and height of buttons
-                        final int btn_dim = 300;
+                                             arr_btns_x[2] = 1250;
+                                             arr_btns_y[2] = 1820;
 
 
-                        for (int i = 0; i < len_arr_btns; i++) {
-
-                            // this rect is the button
-
-                            Rect rect_btn_1_spot = new Rect(arr_btns_x[i] - btn_dim / 2, arr_btns_y[i] - btn_dim / 2,
-                                    arr_btns_x[i] + btn_dim / 2, arr_btns_y[i] + btn_dim / 2);
-                            Log.d(TAG, "Rectangle Coordinates" + rect_btn_1_spot);
-
-                            if (rect_btn_1_spot.contains((int) event.getRawX(), (int) event.getRawY())) {
-                                Snackbar.make(v, "Clicked on button in spot", Snackbar.LENGTH_SHORT).show();
-                                OnPtBtnActionDown(v, dim_popup_window, window, loc_raw_touch);
-
-                            } else {
-                                // do stuff
-                            }
-                        }
+//                        pIntent.putExtra("sampleKey","THis message is being sent");
+//                        startActivity(pIntent);
 
 
-                        Log.d(TAG, "Point clicked, x:" + loc_raw_touch[0]);
-                        Log.d(TAG, "Point clicked, y:" + loc_raw_touch[1]);
+                                             int len_arr_btns = arr_btns_x.length;
 
-                        break;
-                    case MotionEvent.ACTION_UP:
+                                             //TODO convert px to dp
+                                             // width and height of buttons
+                                             final int btn_dim = 300;
 
-                        // TODO http://stackoverflow.com/questions/21872464/get-button-coordinates-and-detect-if-finger-is-over-them-android
 
-                        //TODO put these all in an array
+                                             for (int i = 0; i < len_arr_btns; i++) {
 
-                        // Initialize popup buttons
+                                                 // this rect is the button
 
-                        Button b1 = (Button) popupContent.findViewById(R.id.btn_1);
-                        Button b2 = (Button) popupContent.findViewById(R.id.btn_2);
-                        Button b3 = (Button) popupContent.findViewById(R.id.btn_3);
-                        Button b4 = (Button) popupContent.findViewById(R.id.btn_4);
-                        Button b5 = (Button) popupContent.findViewById(R.id.btn_moment);
+                                                 //public Rect
 
-                        // getLocationOnScreen computes the coordinates of the buttons
+                                                 Rect rect_btn_1_spot = new Rect(arr_btns_x[i] - btn_dim / 2, arr_btns_y[i] - btn_dim / 2,
+                                                         arr_btns_x[i] + btn_dim / 2, arr_btns_y[i] + btn_dim / 2);
+                                                 Log.d(TAG, "Rectangle Coordinates" + rect_btn_1_spot);
 
-                        int[] b1Location = new int[2];
-                        b1.getLocationOnScreen(b1Location);
-                        Rect b1Rect = new Rect(b1Location[0], b1Location[1],
-                                b1Location[0] + b1.getWidth(), b1Location[1] + b1.getHeight());
+                                                 if (rect_btn_1_spot.contains((int) event.getRawX(), (int) event.getRawY())) {
+                                                     Snackbar.make(v, "Clicked on button in spot", Snackbar.LENGTH_SHORT).show();
+                                                     OnPtBtnActionDown(v, dim_popup_window, window, loc_raw_touch);
 
-                        int[] b2Location = new int[2];
-                        b2.getLocationOnScreen(b2Location);
-                        Rect b2Rect = new Rect(b2Location[0], b2Location[1],
-                                b2Location[0] + b2.getWidth(), b2Location[1] + b2.getHeight());
+                                                 } else {
+                                                     // do stuff
+                                                 }
+                                             }
 
-                        int[] b3Location = new int[2];
-                        b3.getLocationOnScreen(b3Location);
-                        Rect b3Rect = new Rect(b3Location[0], b3Location[1],
-                                b3Location[0] + b3.getWidth(), b3Location[1] + b3.getHeight());
+                                             Log.d(TAG, "Point clicked, x:" + loc_raw_touch[0]);
+                                             Log.d(TAG, "Point clicked, y:" + loc_raw_touch[1]);
 
-                        int[] b4Location = new int[2];
-                        b4.getLocationOnScreen(b4Location);
-                        Rect b4Rect = new Rect(b4Location[0], b4Location[1],
-                                b4Location[0] + b4.getWidth(), b4Location[1] + b4.getHeight());
+                                             break;
+                                         case MotionEvent.ACTION_UP:
 
-                        int[] b5Location = new int[2];
-                        b5.getLocationOnScreen(b5Location);
-                        Rect b5Rect = new Rect(b5Location[0], b5Location[1],
-                                b5Location[0] + b5.getWidth(), b5Location[1] + b5.getHeight());
+                                             // TODO http://stackoverflow.com/questions/21872464/get-button-coordinates-and-detect-if-finger-is-over-them-android
 
-                        if (b1Rect.contains((int) event.getRawX(), (int) event.getRawY())) {
-                            Log.d("MainActivty", "Released on Button1");
-                            // Toast.makeText(MainActivity.this, "Released on Button1", Toast.LENGTH_SHORT).show();
-                            Snackbar.make(v, "Released on Button 1", Snackbar.LENGTH_SHORT).show();
+                                             //TODO put these all in an array
 
-                        } else if (b2Rect.contains((int) event.getRawX(), (int) event.getRawY())) {
-                            Log.d("MainActivty", "Released on Button2");
-                            Snackbar.make(v, "Released on Button 2", Snackbar.LENGTH_SHORT).show();
+                                             // Initialize popup buttons
 
-                        } else if (b3Rect.contains((int) event.getRawX(), (int) event.getRawY())) {
-                            Log.d("MainActivty", "Released on Button3");
-                            Snackbar.make(v, "Released on Button 3", Snackbar.LENGTH_SHORT).show();
+                                             Button b1 = (Button) popupContent.findViewById(R.id.btn_1_1);
+                                             Button b2 = (Button) popupContent.findViewById(R.id.btn_1_2);
+                                             Button b3 = (Button) popupContent.findViewById(R.id.btn_1_3);
+                                             Button b4 = (Button) popupContent.findViewById(R.id.btn_1_4);
+                                             Button b5 = (Button) popupContent.findViewById(R.id.btn_1_5);
 
-                        } else if (b4Rect.contains((int) event.getRawX(), (int) event.getRawY())) {
-                            Log.d("MainActivty", "Released on Button4");
-                            Snackbar.make(v, "Released on Button 4", Snackbar.LENGTH_SHORT).show();
+                                             // Set number of buttons in popup //TODO code this so that is calculates the number of buttons in the activity defined below in id_activity_num
+//                                             int num_btns_popup = 5;
+//
+//
+//                                             // TODO fix this.. I sortof wrote this and kept thinking it was for all the buttons not just the ones in the popup. But it can be copied more or less into the code of for all the point buttons in each activity
+//                                             int id_activity_num = 1; // Number corresponding to the activity
+//
+//                                             Button[][] buttons = new Button[id_activity_num][num_btns_popup];
+//                                             float[][] loc_btns_popup = new float[id_activity_num][num_btns_popup];
 
-                        } else if (b5Rect.contains((int) event.getRawX(), (int) event.getRawY())) {
-                            Log.d("MainActivty", "Released on Moment");
-                            Snackbar.make(v, "Released on Moment", Snackbar.LENGTH_SHORT).show();
 
-                        } else {
-                            Log.d("MainActivity", "Didn't drag to a button");
-                            Snackbar.make(v, "Tap and hold to select button", Snackbar.LENGTH_LONG).show();
-                        }
+//                                             Rect[][] btn_Rect = new Rect[id_activity_num][num_btns_popup];
+//
+//                                             //int[] tmp_var = 0;
+//
+//                                             int[] tmp_var = new int[2];
+                                             //int[] tmp_var_2 = new int[num_btns_popup];
 
-                        window.dismiss();
-                        break;
-                }
-                return v.onTouchEvent(event);
-            }
-        });
+//                                             for (int n = 0; n < 1; n++) {
+//                                                 for (int j = 0; j < id_activity_num; j++) {
+//                                                     // makes but
+//                                                     //btn _ "layout#" _ "button#"
+//
+////                                                     String buttonID = "btn" + "_" + n + 1 + "_" + j + 1;
+////                                                     Log.d(TAG, "resID= " + buttonID);
+//
+////                                                  int resID = etResources().getIdentifier(buttonID, "id", getPackageName());
+//                                                     int[] resID = {R.id.btn_1_1, R.id.btn_1_2, R.id.btn_1_3, R.id.btn_1_4, R.id.btn_1_5};
+//
+//                                                     buttons[n][j] = (Button) popupContent.findViewById(resID[j]);
+//
+//                                                     Log.d(TAG, "resID = " + resID);
+//
+//                                                     Log.d(TAG, "buttons[n][j] = " + buttons[n][j]);
+//
+////                                buttons[0][0].getLocationOnScreen(tmp_var);
+//                                                     buttons[n][j].getLocationOnScreen(tmp_var);
+//
+//
+//
+//                                                     Log.d(TAG, "tmp_var=  " + tmp_var[0]);
+//
+//                                                     //buttons[i][j].setOnClickListener(this);
+//                                                 }
+//                                             }
+                                             ///////////////////////////
+
+
+                                             int[] b1Location = new int[2];
+                                             b1.getLocationOnScreen(b1Location);
+                                             Rect b1Rect = new Rect(b1Location[0], b1Location[1],
+                                                     b1Location[0] + b1.getWidth(), b1Location[1] + b1.getHeight());
+
+                                             int[] b2Location = new int[2];
+                                             b2.getLocationOnScreen(b2Location);
+                                             Rect b2Rect = new Rect(b2Location[0], b2Location[1],
+                                                     b2Location[0] + b2.getWidth(), b2Location[1] + b2.getHeight());
+
+                                             int[] b3Location = new int[2];
+                                             b3.getLocationOnScreen(b3Location);
+                                             Rect b3Rect = new Rect(b3Location[0], b3Location[1],
+                                                     b3Location[0] + b3.getWidth(), b3Location[1] + b3.getHeight());
+
+                                             int[] b4Location = new int[2];
+                                             b4.getLocationOnScreen(b4Location);
+                                             Rect b4Rect = new Rect(b4Location[0], b4Location[1],
+                                                     b4Location[0] + b4.getWidth(), b4Location[1] + b4.getHeight());
+
+                                             int[] b5Location = new int[2];
+                                             b5.getLocationOnScreen(b5Location);
+                                             Rect b5Rect = new Rect(b5Location[0], b5Location[1],
+                                                     b5Location[0] + b5.getWidth(), b5Location[1] + b5.getHeight());
+
+                                             if (b1Rect.contains((int) event.getRawX(), (int) event.getRawY())) {
+                                                 Log.d("MainActivty", "Released on Button1");
+                                                 // Toast.makeText(MainActivity.this, "Released on Button1", Toast.LENGTH_SHORT).show();
+                                                 Snackbar.make(v, "Released on Button 1", Snackbar.LENGTH_SHORT).show();
+
+                                             } else if (b2Rect.contains((int) event.getRawX(), (int) event.getRawY())) {
+                                                 Log.d("MainActivty", "Released on Button2");
+                                                 Snackbar.make(v, "Released on Button 2", Snackbar.LENGTH_SHORT).show();
+
+                                             } else if (b3Rect.contains((int) event.getRawX(), (int) event.getRawY())) {
+                                                 Log.d("MainActivty", "Released on Button3");
+                                                 Snackbar.make(v, "Released on Button 3", Snackbar.LENGTH_SHORT).show();
+
+                                             } else if (b4Rect.contains((int) event.getRawX(), (int) event.getRawY())) {
+                                                 Log.d("MainActivty", "Released on Button4");
+                                                 Snackbar.make(v, "Released on Button 4", Snackbar.LENGTH_SHORT).show();
+
+                                             } else if (b5Rect.contains((int) event.getRawX(), (int) event.getRawY())) {
+                                                 Log.d("MainActivty", "Released on Moment");
+                                                 Snackbar.make(v, "Released on Moment", Snackbar.LENGTH_SHORT).show();
+
+                                             } else {
+                                                 Log.d("MainActivity", "Didn't drag to a button");
+                                                 Snackbar.make(v, "Tap and hold to select button", Snackbar.LENGTH_LONG).show();
+                                             }
+                                             window.dismiss();
+                                             break;
+                                     }
+                                     return v.onTouchEvent(event);
+                                 }
+                             }
+        );
     }
 
     private void OnPtBtnActionDown(View v, int dim_popup_window, PopupWindow window, float loc_raw_touch[]) {
