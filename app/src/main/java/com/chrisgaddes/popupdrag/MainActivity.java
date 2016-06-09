@@ -11,6 +11,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 
 public class MainActivity extends AppCompatActivity { // implements View.OnTouchListener {
 
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity { // implements View.OnTouch
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        RelativeLayout mmain_activity_Relative_Layout = (RelativeLayout) findViewById(R.id.main_activity_Relative_Layout);
 
         findViewById(R.id.btn_load_second_activity).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -35,7 +37,8 @@ public class MainActivity extends AppCompatActivity { // implements View.OnTouch
         });
 
 
-        final View popupContent = getLayoutInflater().inflate(R.layout.popup_main, null);
+        //final View popupContent = getLayoutInflater().inflate(R.layout.popup_main, null);
+        final View popupContent = getLayoutInflater().inflate(R.layout.popup_main, mmain_activity_Relative_Layout, false);
 
         // set dimension of popup window. The xml file is set to match parent
         final int dim_popup_window = 700;
