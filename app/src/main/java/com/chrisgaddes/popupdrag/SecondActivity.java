@@ -1,89 +1,159 @@
 package com.chrisgaddes.popupdrag;
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Path;
+import android.content.res.Resources;
+import android.graphics.Matrix;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.widget.ImageView;
+import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.Interpolator;
+import android.view.animation.TranslateAnimation;
 
-/**
- * Created by cagad on 6/7/2016.
- */
 public class SecondActivity extends AppCompatActivity {
 
-//    private TextView textViewMessage,textViewPerson;
 
     private static final String TAG = "SecondActivity";
-
-    ImageView drawingImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_second);
+        setContentView(R.layout.activity_main);
 
-        drawingImageView = (ImageView) this.findViewById(R.id.DrawingImageView);
-        Bitmap bitmap = Bitmap.createBitmap((int) getWindowManager()
-                .getDefaultDisplay().getWidth(), (int) getWindowManager()
-                .getDefaultDisplay().getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        drawingImageView.setImageBitmap(bitmap);
+        final LayeredImageView v = new LayeredImageView(this);
+        Resources res = v.getResources();
 
-        // Path
+        v.setImageResource(R.drawable.background);
 
-        Paint paint = new Paint();
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setColor(Color.GREEN);
-        Path p = new Path();
-        p.moveTo(20, 20);
-        p.lineTo(100, 200);
-        p.lineTo(200, 100);
-        p.lineTo(240, 155);
-        p.lineTo(250, 175);
-        p.lineTo(20, 20);
-        canvas.drawPath(p, paint);
+        Matrix m;
 
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        int height = displaymetrics.heightPixels;
-        int width = displaymetrics.widthPixels;
+        m = new Matrix();
+        m.preTranslate(81, 146); // pixels to offset
+        final LayeredImageView.Layer layer1 = v.addLayer(res.getDrawable(R.drawable.layer1), m);
 
-        Log.d(TAG, "Height is: " + height);
-        Log.d(TAG, "Width is: " + width);
+        m = new Matrix();
+        m.preTranslate(62, 63); // pixels to offset
+        final LayeredImageView.Layer layer0 = v.addLayer(0, res.getDrawable(R.drawable.layer0), m);
 
 
-//        String message = getIntent().getStringExtra("sampleKey");
-        //textViewMessage.setText(message);
+        final AnimationDrawable ad = new AnimationDrawable();
+        ad.setOneShot(false);
+        Drawable frame1, frame2;
+        frame1 = res.getDrawable(R.drawable.layer0);
+        frame2 = res.getDrawable(R.drawable.layer1);
+        ad.addFrame(frame1, 3000);
+        ad.addFrame(frame2, 1000);
+        ad.addFrame(frame1, 250);
+        ad.addFrame(frame2, 250);
+        ad.addFrame(frame1, 250);
+        ad.addFrame(frame2, 250);
+        ad.addFrame(frame1, 250);
+        ad.addFrame(frame2, 250);
+        ad.setBounds(200, 20, 300, 120);
+        v.addLayer(1, ad);
+        v.post(new Runnable() {
+            @Override
+            public void run() {
+                ad.start();
+            }
+        });
 
-//        Snackbar.make(findViewById(R.id.lyt_linearlayout_second_activity), "Message is" + message, Snackbar.LENGTH_SHORT).show();
+        int[] colors = {
+                0xeeffffff,
+                0xee0038a8,
+                0xeece1126,
+        };
+        GradientDrawable gd = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors);
+        gd.setBounds(0, 0, 100, 129);
+        gd.setCornerRadius(20);
+        gd.setStroke(5, 0xaa666666);
+        final Matrix mm = new Matrix();
+        mm.preTranslate(200, 69); // pixels to offset
+        mm.preRotate(20, 50, 64.5f);
+        final LayeredImageView.Layer layer2 = v.addLayer(2, gd, mm);
 
-        Snackbar.make(findViewById(R.id.lyt_linearlayout_second_activity), "Height is" + width, Snackbar.LENGTH_SHORT).show();
+        final Animation as = AnimationUtils.loadAnimation(this, R.anim.anim_set);
 
+        final Runnable action1 = new Runnable() {
+            @Override
+            public void run() {
+                Animation a;
+                Interpolator i;
 
+                i = new Interpolator() {
+                    @Override
+                    public float getInterpolation(float input) {
+                        return (float) Math.sin(input * Math.PI);
+                    }
+                };
+                as.setInterpolator(i);
+                layer0.startLayerAnimation(as);
 
-        // Height is 2392
-        // width is 1440
+                a = new TranslateAnimation(0, 0, 0, 100);
+                a.setDuration(3000);
+                i = new Interpolator() {
+                    @Override
+                    public float getInterpolation(float input) {
+                        float output = (float) Math.sin(Math.pow(input, 2.5f) * 12 * Math.PI);
+                        return (1 - input) * output;
+                    }
+                };
+                a.setInterpolator(i);
+                layer1.startLayerAnimation(a);
 
-        //TODO figure out percentage stuff screen
+                a = new AlphaAnimation(0, 1);
+                i = new Interpolator() {
+                    @Override
+                    public float getInterpolation(float input) {
+                        return (float) (1 - Math.sin(input * Math.PI));
+                    }
+                };
+                a.setInterpolator(i);
+                a.setDuration(2000);
+                layer2.startLayerAnimation(a);
+            }
+        };
+        View.OnClickListener l1 = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                action1.run();
+            }
+        };
+        v.setOnClickListener(l1);
+        v.postDelayed(action1, 2000);
 
-        double x = 0.80;
-        double y = 0.60;
-
-
-        int percentageX= (int)((x*100*100)/width);
-        int percentageY= (int)((y*100*100)/height);
-
-        Log.d(TAG, "Percentage X is: " + (double) percentageX);
-        Log.d(TAG, "Percentage Y is: " + (double) percentageY);
+        //    final float[] values = new float[9];
+//    final float[] pts = new float[2];
+//    final Matrix inverse = new Matrix();;
+//    OnTouchListener l = new OnTouchListener() {
+//        @Override
+//        public boolean onTouch(View view, MotionEvent event) {
+//            int action = event.getAction();
+//            if (action != MotionEvent.ACTION_UP) {
+//                if (inverse.isIdentity()) {
+//                    v.getImageMatrix().invert(inverse);
+//                    Log.d(TAG, "onTouch set inverse");
+//                }
+//                pts[0] = event.getX();
+//                pts[1] = event.getY();
+//                inverse.mapPoints(pts);
+//
+//                mm.getValues(values);
+//                // gd's bounds are (0, 0, 100, 129);
+//                values[Matrix.MTRANS_X] = pts[0] - 100 / 2;
+//                values[Matrix.MTRANS_Y] = pts[1] - 129 / 2;
+//                mm.setValues(values);
+//                v.invalidate();
+//            }
+//            return false;
+//        }
+//    };
+//    v.setOnTouchListener(l);
+        setContentView(v);
 
     }
-
-
 }
-
