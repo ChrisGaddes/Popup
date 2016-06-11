@@ -1,5 +1,6 @@
 package com.chrisgaddes.popupdrag;
 
+import android.annotation.SuppressLint;
 import android.content.res.Resources;
 import android.graphics.Matrix;
 import android.graphics.drawable.AnimationDrawable;
@@ -7,7 +8,10 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -18,6 +22,9 @@ public class SecondActivity extends AppCompatActivity {
 
 
     private static final String TAG = "SecondActivity";
+    int viewHeight;
+    int viewWidth;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,9 +32,56 @@ public class SecondActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         final LayeredImageView v = new LayeredImageView(this);
+
+
+        // this gets the width and height of the view
+        v.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @SuppressLint("NewApi")
+            @SuppressWarnings("deprecation")
+            @Override
+            public void onGlobalLayout() {
+                //now we can retrieve the width and height
+                int viewWidth = v.getWidth();
+                int viewHeight = v.getHeight();
+
+                Log.d(TAG, "View Height = " + viewHeight);
+                Log.d(TAG, "View Width = " + viewWidth);
+
+                //...
+                //do whatever you want with them
+                //...
+                //this is an important step not to keep receiving callbacks:
+                //we should remove this listener
+                //I use the function to remove it based on the api level!
+
+                if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN)
+                    v.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                else
+                    v.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+            }
+        });
+
+//        final RelativeLayout below= (RelativeLayout) findViewById(R.id.lyt_RelativeLayout_activity_second);
+//        below.post(new Runnable()
+//        {
+//            @Override
+//            public void run()
+//            {
+//                Log.i("TAG", "Layout width :"+ below.getWidth());
+//                Log.i("TAG", "Layout height :"+ below.getHeight());
+//            }
+//        });
+
+
         Resources res = v.getResources();
 
-        v.setImageResource(R.drawable.background);
+
+
+
+
+
+        // setImageResource sets the source image of the ImageView, which is LayeredImageView
+        v.setImageResource(R.drawable.fbd_1);
 
         Matrix m;
 
@@ -62,6 +116,10 @@ public class SecondActivity extends AppCompatActivity {
             }
         });
 
+
+
+
+        // This array hold the gradient colors for gd
         int[] colors = {
                 0xeeffffff,
                 0xee0038a8,
@@ -69,7 +127,7 @@ public class SecondActivity extends AppCompatActivity {
         };
         GradientDrawable gd = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, colors);
         gd.setBounds(0, 0, 100, 129);
-        gd.setCornerRadius(20);
+        gd.setCornerRadius(1);
         gd.setStroke(5, 0xaa666666);
         final Matrix mm = new Matrix();
         mm.preTranslate(200, 69); // pixels to offset
@@ -126,34 +184,39 @@ public class SecondActivity extends AppCompatActivity {
         v.setOnClickListener(l1);
         v.postDelayed(action1, 2000);
 
-        //    final float[] values = new float[9];
-//    final float[] pts = new float[2];
-//    final Matrix inverse = new Matrix();;
-//    OnTouchListener l = new OnTouchListener() {
-//        @Override
-//        public boolean onTouch(View view, MotionEvent event) {
-//            int action = event.getAction();
-//            if (action != MotionEvent.ACTION_UP) {
-//                if (inverse.isIdentity()) {
-//                    v.getImageMatrix().invert(inverse);
-//                    Log.d(TAG, "onTouch set inverse");
-//                }
-//                pts[0] = event.getX();
-//                pts[1] = event.getY();
-//                inverse.mapPoints(pts);
-//
-//                mm.getValues(values);
-//                // gd's bounds are (0, 0, 100, 129);
-//                values[Matrix.MTRANS_X] = pts[0] - 100 / 2;
-//                values[Matrix.MTRANS_Y] = pts[1] - 129 / 2;
-//                mm.setValues(values);
-//                v.invalidate();
-//            }
-//            return false;
-//        }
-//    };
-//    v.setOnTouchListener(l);
+        final float[] values = new float[9];
+        final float[] pts = new float[2];
+        final Matrix inverse = new Matrix();
+        ;
+        View.OnTouchListener l = new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                int action = event.getAction();
+                if (action != MotionEvent.ACTION_UP) {
+                    if (inverse.isIdentity()) {
+                        v.getImageMatrix().invert(inverse);
+                        Log.d(TAG, "onTouch set inverse");
+                    }
+                    pts[0] = event.getX();
+                    pts[1] = event.getY();
+                    inverse.mapPoints(pts);
+
+                    mm.getValues(values);
+                    // gd's bounds are (0, 0, 100, 129);
+                    values[Matrix.MTRANS_X] = pts[0] - 100 / 2;
+                    values[Matrix.MTRANS_Y] = pts[1] - 129 / 2;
+                    mm.setValues(values);
+                    v.invalidate();
+                }
+                return false;
+            }
+        };
+        v.setOnTouchListener(l);
         setContentView(v);
 
+
+
     }
+
+
 }
