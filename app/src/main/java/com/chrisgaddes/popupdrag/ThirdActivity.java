@@ -3,6 +3,7 @@ package com.chrisgaddes.popupdrag;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.CornerPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.Bundle;
@@ -11,9 +12,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.util.ArrayList;
+
 public class ThirdActivity extends AppCompatActivity {
 
     private static final String TAG = "ThirdActivity";
+
+    //TODO add pinch to zoom http://stackoverflow.com/questions/30979647/how-to-draw-by-finger-on-canvas-after-pinch-to-zoom-coordinates-changed-in-andro
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,36 +27,40 @@ public class ThirdActivity extends AppCompatActivity {
         CrazyEightsView ev = new CrazyEightsView(this);
 
         setContentView(ev);
+
+
     }
 
     public class CrazyEightsView extends View {
 
         // initialize variables
-
-        private Paint redPaint;
         private Paint blackPaint;
+        private Paint paint_arrow;
+        private Path path_arrow;
+
         private int loc_arrow_point_x;
         private int loc_arrow_point_y;
         private int btn_loc_x;
         private int btn_loc_y;
-        final private double len_arrow_shaft;
-        final private double len_arrow_head;
+
+        private double len_arrow_shaft;
+        private double len_arrow_head;
         private double angle;
-        private double arrow_head_left;
-        private double arrow_head_right;
+        private double angle_arrow_head_left;
+        private double angle_arrow_head_right;
         private float loc_arrow_head_left_x;
         private float loc_arrow_head_left_y;
         private float loc_arrow_head_right_x;
         private float loc_arrow_head_right_y;
 
 
-        //pathList = new ArrayList<Path>;
+
 
         double pi = Math.PI;
         double angles[] = {-pi, -3 * pi / 4, -pi / 2, -pi / 4, 0, pi / 4, pi / 2, 3 * pi / 4, pi, 2 * pi};
 
-        private Paint paint_arrow;
-        private Path path_arrow;
+        ArrayList<Path> pathList = new ArrayList<Path>();
+
 
         public CrazyEightsView(Context context) {
             super(context);
@@ -69,16 +78,15 @@ public class ThirdActivity extends AppCompatActivity {
             loc_arrow_head_left_y = btn_loc_y;
             loc_arrow_head_right_x = btn_loc_x;
             loc_arrow_head_right_y = btn_loc_y;
-            len_arrow_shaft = 300;
-            len_arrow_head = 100;
+            len_arrow_shaft = 250;
+            len_arrow_head = 80;
 
             paint_arrow.setStyle(Paint.Style.FILL);
-            paint_arrow.setColor(Color.TRANSPARENT);
-            paint_arrow.setStrokeWidth(20f);
-            paint_arrow.setPathEffect(null);
-            paint_arrow.setColor(Color.GREEN);
+            paint_arrow.setStrokeWidth(15f);
+            paint_arrow.setPathEffect(new CornerPathEffect(10));
+            paint_arrow.setColor(Color.RED);
             paint_arrow.setStyle(Paint.Style.STROKE);
-
+            //TODO set beginning of shaft to transparent so arrow appears to be at surface
         }
 
         @Override
@@ -90,7 +98,11 @@ public class ThirdActivity extends AppCompatActivity {
             canvas.drawCircle(btn_loc_x, btn_loc_y, 50, blackPaint);
 
             // draws arrow
-            canvas.drawPath(path_arrow, paint_arrow);
+            for (Path path : pathList) {
+                canvas.drawPath(path, paint_arrow);
+            }
+
+            //canvas.drawPath(path_arrow, paint_arrow);
         }
 
         public boolean onTouchEvent(MotionEvent event) {
@@ -100,6 +112,41 @@ public class ThirdActivity extends AppCompatActivity {
 
             switch (eventaction) {
                 case MotionEvent.ACTION_DOWN:
+
+                    path_arrow = new Path();
+                    pathList.add(path_arrow); // <-- Add this line.
+
+
+                    path_arrow.reset();
+
+                    loc_arrow_point_x = X;
+                    loc_arrow_point_y = Y;
+
+                    angle = Math.atan2(loc_arrow_point_y - btn_loc_y, loc_arrow_point_x - btn_loc_x);
+                    angle_arrow_head_left = 4 * pi / 3 - angle;
+                    angle_arrow_head_right = -pi / 3 - angle;
+
+                    loc_arrow_head_left_x = (float) ((float) len_arrow_head * Math.sin(angle_arrow_head_left) + loc_arrow_point_x);
+                    loc_arrow_head_left_y = (float) ((float) len_arrow_head * Math.cos(angle_arrow_head_left) + loc_arrow_point_y);
+
+                    loc_arrow_head_right_x = (float) ((float) len_arrow_head * Math.sin(angle_arrow_head_right) + loc_arrow_point_x);
+                    loc_arrow_head_right_y = (float) ((float) len_arrow_head * Math.cos(angle_arrow_head_right) + loc_arrow_point_y);
+
+
+                    // draws arrow shaft
+                    path_arrow.moveTo(btn_loc_x, btn_loc_y);
+                    path_arrow.lineTo(loc_arrow_point_x, loc_arrow_point_y);
+                    path_arrow.moveTo(loc_arrow_point_x, loc_arrow_point_y);
+
+                    // draws arrow head, left and right side
+                    path_arrow.lineTo(loc_arrow_head_left_x, loc_arrow_head_left_y);
+                    path_arrow.moveTo(loc_arrow_point_x, loc_arrow_point_y);
+                    path_arrow.lineTo(loc_arrow_head_right_x, loc_arrow_head_right_y);
+
+                    path_arrow.close();
+
+                    invalidate();// call invalidate to refresh the draw
+
                     break;
                 case MotionEvent.ACTION_MOVE:
                     path_arrow.reset();
@@ -107,14 +154,14 @@ public class ThirdActivity extends AppCompatActivity {
                     loc_arrow_point_y = Y;
 
                     angle = Math.atan2(loc_arrow_point_y - btn_loc_y, loc_arrow_point_x - btn_loc_x);
-                    arrow_head_left = 4 * pi / 3 - angle;
-                    arrow_head_right = -pi / 3 - angle;
+                    angle_arrow_head_left = 4 * pi / 3 - angle;
+                    angle_arrow_head_right = -pi / 3 - angle;
 
-                    loc_arrow_head_left_x = (float) ((float) len_arrow_head * Math.sin(arrow_head_left) + loc_arrow_point_x);
-                    loc_arrow_head_left_y = (float) ((float) len_arrow_head * Math.cos(arrow_head_left) + loc_arrow_point_y);
+                    loc_arrow_head_left_x = (float) ((float) len_arrow_head * Math.sin(angle_arrow_head_left) + loc_arrow_point_x);
+                    loc_arrow_head_left_y = (float) ((float) len_arrow_head * Math.cos(angle_arrow_head_left) + loc_arrow_point_y);
 
-                    loc_arrow_head_right_x = (float) ((float) len_arrow_head * Math.sin(arrow_head_right) + loc_arrow_point_x);
-                    loc_arrow_head_right_y = (float) ((float) len_arrow_head * Math.cos(arrow_head_right) + loc_arrow_point_y);
+                    loc_arrow_head_right_x = (float) ((float) len_arrow_head * Math.sin(angle_arrow_head_right) + loc_arrow_point_x);
+                    loc_arrow_head_right_y = (float) ((float) len_arrow_head * Math.cos(angle_arrow_head_right) + loc_arrow_point_y);
 
 
                     // draws arrow shaft
@@ -157,13 +204,13 @@ public class ThirdActivity extends AppCompatActivity {
                     loc_arrow_point_y = (int) (len_arrow_shaft * Math.sin(angle) + btn_loc_x);
                     loc_arrow_point_x = (int) (len_arrow_shaft * Math.cos(angle) + btn_loc_y);
 
-                    arrow_head_left = 4 * pi / 3 - angle;
-                    arrow_head_right = -pi / 3 - angle;
+                    angle_arrow_head_left = 4 * pi / 3 - angle;
+                    angle_arrow_head_right = -pi / 3 - angle;
 
-                    loc_arrow_head_left_x = (float) ((float) len_arrow_head * Math.sin(arrow_head_left) + loc_arrow_point_x);
-                    loc_arrow_head_left_y = (float) ((float) len_arrow_head * Math.cos(arrow_head_left) + loc_arrow_point_y);
-                    loc_arrow_head_right_x = (float) ((float) len_arrow_head * Math.sin(arrow_head_right) + loc_arrow_point_x);
-                    loc_arrow_head_right_y = (float) ((float) len_arrow_head * Math.cos(arrow_head_right) + loc_arrow_point_y);
+                    loc_arrow_head_left_x = (float) ((float) len_arrow_head * Math.sin(angle_arrow_head_left) + loc_arrow_point_x);
+                    loc_arrow_head_left_y = (float) ((float) len_arrow_head * Math.cos(angle_arrow_head_left) + loc_arrow_point_y);
+                    loc_arrow_head_right_x = (float) ((float) len_arrow_head * Math.sin(angle_arrow_head_right) + loc_arrow_point_x);
+                    loc_arrow_head_right_y = (float) ((float) len_arrow_head * Math.cos(angle_arrow_head_right) + loc_arrow_point_y);
 
 
                     // draws arrow shaft
