@@ -23,6 +23,9 @@
             android:label="Second Activity Page"
             />
 
+        <activity android:name=".ThirdActivity"
+            android:label="Third Activity Page"
+            />
 
     </application>
 

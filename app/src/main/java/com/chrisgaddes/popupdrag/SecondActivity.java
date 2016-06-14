@@ -1,5 +1,6 @@
 package com.chrisgaddes.popupdrag;
 
+
 import android.annotation.SuppressLint;
 import android.content.res.Resources;
 import android.graphics.Matrix;
@@ -20,7 +21,6 @@ import android.view.animation.TranslateAnimation;
 
 public class SecondActivity extends AppCompatActivity {
 
-
     private static final String TAG = "SecondActivity";
     int viewHeight;
     int viewWidth;
@@ -29,20 +29,19 @@ public class SecondActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_second);
 
         final LayeredImageView v = new LayeredImageView(this);
-
 
         // this gets the width and height of the view
         v.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @SuppressLint("NewApi")
-            @SuppressWarnings("deprecation")
+            //@SuppressWarnings("deprecation")
             @Override
             public void onGlobalLayout() {
                 //now we can retrieve the width and height
-                int viewWidth = v.getWidth();
-                int viewHeight = v.getHeight();
+                viewWidth = v.getWidth();
+                viewHeight = v.getHeight();
 
                 Log.d(TAG, "View Height = " + viewHeight);
                 Log.d(TAG, "View Width = " + viewWidth);
@@ -54,30 +53,14 @@ public class SecondActivity extends AppCompatActivity {
                 //we should remove this listener
                 //I use the function to remove it based on the api level!
 
-                if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN)
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN)
                     v.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 else
                     v.getViewTreeObserver().removeGlobalOnLayoutListener(this);
             }
         });
 
-//        final RelativeLayout below= (RelativeLayout) findViewById(R.id.lyt_RelativeLayout_activity_second);
-//        below.post(new Runnable()
-//        {
-//            @Override
-//            public void run()
-//            {
-//                Log.i("TAG", "Layout width :"+ below.getWidth());
-//                Log.i("TAG", "Layout height :"+ below.getHeight());
-//            }
-//        });
-
-
         Resources res = v.getResources();
-
-
-
-
 
 
         // setImageResource sets the source image of the ImageView, which is LayeredImageView
@@ -86,8 +69,13 @@ public class SecondActivity extends AppCompatActivity {
         Matrix m;
 
         m = new Matrix();
-        m.preTranslate(81, 146); // pixels to offset
-        final LayeredImageView.Layer layer1 = v.addLayer(res.getDrawable(R.drawable.layer1), m);
+        m.preTranslate(981, 146); // pixels to offset
+
+        //Drawable drawable = ContextCompat.getDrawable(this, R.drawable.ic_android_black_24dp);
+
+
+        final LayeredImageView.Layer layer1 = v.addLayer(0, res.getDrawable(R.drawable.arrow), m);
+
 
         m = new Matrix();
         m.preTranslate(62, 63); // pixels to offset
@@ -115,8 +103,6 @@ public class SecondActivity extends AppCompatActivity {
                 ad.start();
             }
         });
-
-
 
 
         // This array hold the gradient colors for gd
@@ -213,7 +199,6 @@ public class SecondActivity extends AppCompatActivity {
         };
         v.setOnTouchListener(l);
         setContentView(v);
-
 
 
     }
