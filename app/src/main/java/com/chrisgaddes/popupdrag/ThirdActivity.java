@@ -19,12 +19,12 @@ public class ThirdActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ArrowView ev = new ArrowView(this);
+        CrazyEightsView ev = new CrazyEightsView(this);
 
         setContentView(ev);
     }
 
-    public class ArrowView extends View {
+    public class CrazyEightsView extends View {
 
         // initialize variables
 
@@ -50,10 +50,15 @@ public class ThirdActivity extends AppCompatActivity {
         double pi = Math.PI;
         double angles[] = {-pi, -3 * pi / 4, -pi / 2, -pi / 4, 0, pi / 4, pi / 2, 3 * pi / 4, pi, 2 * pi};
 
-        public ArrowView(Context context) {
+        private Paint paint_arrow;
+        private Path path_arrow;
+
+        public CrazyEightsView(Context context) {
             super(context);
 
+            paint_arrow = new Paint();
 
+            path_arrow = new Path();
 
             blackPaint = new Paint();
             btn_loc_x = 700;
@@ -66,6 +71,14 @@ public class ThirdActivity extends AppCompatActivity {
             loc_arrow_head_right_y = btn_loc_y;
             len_arrow_shaft = 300;
             len_arrow_head = 100;
+
+            paint_arrow.setStyle(Paint.Style.FILL);
+            paint_arrow.setColor(Color.TRANSPARENT);
+            paint_arrow.setStrokeWidth(20f);
+            paint_arrow.setPathEffect(null);
+            paint_arrow.setColor(Color.GREEN);
+            paint_arrow.setStyle(Paint.Style.STROKE);
+
         }
 
         @Override
@@ -73,31 +86,11 @@ public class ThirdActivity extends AppCompatActivity {
         public void onDraw(Canvas canvas) {
             super.onDraw(canvas);
 
-            Paint paint_arrow = new Paint();
-            Path path_arrow = new Path();
-            paint_arrow.setStyle(Paint.Style.FILL);
-            paint_arrow.setColor(Color.TRANSPARENT);
-
-            // draws arrow shaft
-            path_arrow.moveTo(btn_loc_x, btn_loc_y);
-            path_arrow.lineTo(loc_arrow_point_x, loc_arrow_point_y);
-            path_arrow.moveTo(loc_arrow_point_x, loc_arrow_point_y);
-
-            // draws arrow head, left and right side
-            path_arrow.lineTo(loc_arrow_head_left_x, loc_arrow_head_left_y);
-            path_arrow.moveTo(loc_arrow_point_x, loc_arrow_point_y);
-            path_arrow.lineTo(loc_arrow_head_right_x, loc_arrow_head_right_y);
-
-            path_arrow.close();
-
-            paint_arrow.setStrokeWidth(20f);
-            paint_arrow.setPathEffect(null);
-            paint_arrow.setColor(Color.GREEN);
-            paint_arrow.setStyle(Paint.Style.STROKE);
-            canvas.drawPath(path_arrow, paint_arrow);
-
             // draws black circle
             canvas.drawCircle(btn_loc_x, btn_loc_y, 50, blackPaint);
+
+            // draws arrow
+            canvas.drawPath(path_arrow, paint_arrow);
         }
 
         public boolean onTouchEvent(MotionEvent event) {
@@ -109,6 +102,7 @@ public class ThirdActivity extends AppCompatActivity {
                 case MotionEvent.ACTION_DOWN:
                     break;
                 case MotionEvent.ACTION_MOVE:
+                    path_arrow.reset();
                     loc_arrow_point_x = X;
                     loc_arrow_point_y = Y;
 
@@ -122,10 +116,25 @@ public class ThirdActivity extends AppCompatActivity {
                     loc_arrow_head_right_x = (float) ((float) len_arrow_head * Math.sin(arrow_head_right) + loc_arrow_point_x);
                     loc_arrow_head_right_y = (float) ((float) len_arrow_head * Math.cos(arrow_head_right) + loc_arrow_point_y);
 
+
+                    // draws arrow shaft
+                    path_arrow.moveTo(btn_loc_x, btn_loc_y);
+                    path_arrow.lineTo(loc_arrow_point_x, loc_arrow_point_y);
+                    path_arrow.moveTo(loc_arrow_point_x, loc_arrow_point_y);
+
+                    // draws arrow head, left and right side
+                    path_arrow.lineTo(loc_arrow_head_left_x, loc_arrow_head_left_y);
+                    path_arrow.moveTo(loc_arrow_point_x, loc_arrow_point_y);
+                    path_arrow.lineTo(loc_arrow_head_right_x, loc_arrow_head_right_y);
+
+                    path_arrow.close();
+
                     invalidate();// call invalidate to refresh the draw
                     break;
                 case MotionEvent.ACTION_UP:
                     // snap to another position
+
+                    path_arrow.reset();
                     loc_arrow_point_x = X;
                     loc_arrow_point_y = Y;
                     angle = Math.atan2(loc_arrow_point_y - btn_loc_y, loc_arrow_point_x - btn_loc_x);
@@ -155,6 +164,19 @@ public class ThirdActivity extends AppCompatActivity {
                     loc_arrow_head_left_y = (float) ((float) len_arrow_head * Math.cos(arrow_head_left) + loc_arrow_point_y);
                     loc_arrow_head_right_x = (float) ((float) len_arrow_head * Math.sin(arrow_head_right) + loc_arrow_point_x);
                     loc_arrow_head_right_y = (float) ((float) len_arrow_head * Math.cos(arrow_head_right) + loc_arrow_point_y);
+
+
+                    // draws arrow shaft
+                    path_arrow.moveTo(btn_loc_x, btn_loc_y);
+                    path_arrow.lineTo(loc_arrow_point_x, loc_arrow_point_y);
+                    path_arrow.moveTo(loc_arrow_point_x, loc_arrow_point_y);
+
+                    // draws arrow head, left and right side
+                    path_arrow.lineTo(loc_arrow_head_left_x, loc_arrow_head_left_y);
+                    path_arrow.moveTo(loc_arrow_point_x, loc_arrow_point_y);
+                    path_arrow.lineTo(loc_arrow_head_right_x, loc_arrow_head_right_y);
+
+                    path_arrow.close();
 
                     invalidate();
 
