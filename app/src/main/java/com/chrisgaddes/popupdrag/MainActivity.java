@@ -139,54 +139,6 @@ public class MainActivity extends AppCompatActivity { // implements View.OnTouch
                                              Button b4 = (Button) popupContent.findViewById(R.id.btn_1_4);
                                              Button b5 = (Button) popupContent.findViewById(R.id.btn_1_5);
 
-                                             // Set number of buttons in popup //TODO code this so that is calculates the number of buttons in the activity defined below in id_activity_num
-//                                             int num_btns_popup = 5;
-//
-//
-//                                             // TODO fix this.. I sortof wrote this and kept thinking it was for all the buttons not just the ones in the popup. But it can be copied more or less into the code of for all the point buttons in each activity
-//                                             int id_activity_num = 1; // Number corresponding to the activity
-//
-//                                             Button[][] buttons = new Button[id_activity_num][num_btns_popup];
-//                                             float[][] loc_btns_popup = new float[id_activity_num][num_btns_popup];
-
-
-//                                             Rect[][] btn_Rect = new Rect[id_activity_num][num_btns_popup];
-//
-//                                             //int[] tmp_var = 0;
-//
-//                                             int[] tmp_var = new int[2];
-                                             //int[] tmp_var_2 = new int[num_btns_popup];
-
-//                                             for (int n = 0; n < 1; n++) {
-//                                                 for (int j = 0; j < id_activity_num; j++) {
-//                                                     // makes but
-//                                                     //btn _ "layout#" _ "button#"
-//
-////                                                     String buttonID = "btn" + "_" + n + 1 + "_" + j + 1;
-////                                                     Log.d(TAG, "resID= " + buttonID);
-//
-////                                                  int resID = etResources().getIdentifier(buttonID, "id", getPackageName());
-//                                                     int[] resID = {R.id.btn_1_1, R.id.btn_1_2, R.id.btn_1_3, R.id.btn_1_4, R.id.btn_1_5};
-//
-//                                                     buttons[n][j] = (Button) popupContent.findViewById(resID[j]);
-//
-//                                                     Log.d(TAG, "resID = " + resID);
-//
-//                                                     Log.d(TAG, "buttons[n][j] = " + buttons[n][j]);
-//
-////                                buttons[0][0].getLocationOnScreen(tmp_var);
-//                                                     buttons[n][j].getLocationOnScreen(tmp_var);
-//
-//
-//
-//                                                     Log.d(TAG, "tmp_var=  " + tmp_var[0]);
-//
-//                                                     //buttons[i][j].setOnClickListener(this);
-//                                                 }
-//                                             }
-                                             ///////////////////////////
-
-
                                              int[] b1Location = new int[2];
                                              b1.getLocationOnScreen(b1Location);
                                              Rect b1Rect = new Rect(b1Location[0], b1Location[1],
