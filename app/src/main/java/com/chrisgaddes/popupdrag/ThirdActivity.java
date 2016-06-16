@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -36,6 +37,7 @@ public class ThirdActivity extends AppCompatActivity {
         // initialize variables
         private Paint paint_points;
         private Paint paint_arrow;
+        private Paint paint_box;
         private Path path_arrow;
 
         private int loc_arrow_point_x;
@@ -53,6 +55,8 @@ public class ThirdActivity extends AppCompatActivity {
 
         private double angle;
         private double angle_dif;
+
+        private double angle_degrees;
         private double tmp_angle_dist;
         private double angle_dist;
         private double arrow_animated_fraction;
@@ -71,18 +75,21 @@ public class ThirdActivity extends AppCompatActivity {
         double angles[] = {-pi, -3 * pi / 4, -pi / 2, -pi / 4, 0, pi / 4, pi / 2, 3 * pi / 4, pi};
 
         // initialize ArrayLists for paths and points
-        ArrayList<Point> pointList = new ArrayList<>();
-        ArrayList<Path> pathList = new ArrayList<>();
+        private ArrayList<Point> pointList = new ArrayList<>();
+        private ArrayList<Rect> rectList = new ArrayList<>();
+
+
+        private ArrayList<Path> pathList = new ArrayList<>();
 
         public DrawArrowsView(Context context) {
             super(context);
 
             paint_arrow = new Paint();
             path_arrow = new Path();
-
-
+            paint_box = new Paint();
 
             // set point locations TODO: import these from database
+            // TODO convert these to dp or percentages (note, aspect ratio may not always be same)
             Point pointOne = new Point(275, 700);
             Point pointTwo = new Point(730, 700);
             Point pointThree = new Point(1150, 700);
@@ -95,10 +102,13 @@ public class ThirdActivity extends AppCompatActivity {
             btn_loc_y = pointList.get(1).y;
             loc_arrow_point_x = btn_loc_x;
             loc_arrow_point_y = btn_loc_y;
+
+            // TODO move these inside loop
             loc_arrow_head_left_x = btn_loc_x;
             loc_arrow_head_left_y = btn_loc_y;
             loc_arrow_head_right_x = btn_loc_x;
             loc_arrow_head_right_y = btn_loc_y;
+
 
             // sets constants  // TODO: change these constants to dp of f
             len_arrow_shaft = 200;
@@ -106,19 +116,36 @@ public class ThirdActivity extends AppCompatActivity {
             dim_btn_radius = 30f;
             time_anim_arrow_dur = 200;
 
+            // create Rects from pointList
+            for (Point g : pointList) {
+                rectList.add(new Rect(g.x - (int) dim_btn_radius, g.y - (int) dim_btn_radius, g.x + (int) dim_btn_radius, g.y + (int) dim_btn_radius));
+           }
+
+            // sets style of arrows
             paint_arrow.setStyle(Paint.Style.FILL);
             paint_arrow.setStrokeWidth(20f);
-            //paint_arrow.setPathEffect(new CornerPathEffect(10)); //TODO fix rounded corner
             paint_arrow.setColor(Color.RED);
             paint_arrow.setStyle(Paint.Style.STROKE);
             paint_arrow.setStrokeCap(Paint.Cap.ROUND);
+
             //TODO set beginning of shaft to transparent so arrow appears to be at surface
+            paint_box.setStyle(Paint.Style.FILL);
+            paint_box.setStrokeWidth(5f);
+            paint_box.setColor(Color.GREEN);
+            paint_box.setStyle(Paint.Style.STROKE);
         }
 
         @Override
 
         public void onDraw(Canvas canvas) {
             super.onDraw(canvas);
+
+
+            for (Rect rect7 : rectList) {
+                canvas.drawRect(rect7, paint_box);;
+            }
+
+            //canvas.drawRect(rect_1, paint_box);
 
             // draws black circle at points in ArrayList pointList
             for (Point ptLst_dots : pointList) {
@@ -129,6 +156,7 @@ public class ThirdActivity extends AppCompatActivity {
             for (Path pthLst_arrows : pathList) {
                 canvas.drawPath(pthLst_arrows, paint_arrow);
             }
+
         }
 
         public boolean onTouchEvent(MotionEvent event) {
@@ -138,10 +166,13 @@ public class ThirdActivity extends AppCompatActivity {
 
             switch (eventaction) {
                 case MotionEvent.ACTION_DOWN:
+
+
                     path_arrow = new Path();
                     pathList.add(path_arrow); // <-- Add this line.
                     path_arrow.reset();
-                    loc_arrow_point_x = X; loc_arrow_point_y = Y;
+                    loc_arrow_point_x = X;
+                    loc_arrow_point_y = Y;
                     angle = Math.atan2(loc_arrow_point_y - btn_loc_y, loc_arrow_point_x - btn_loc_x);
                     drawArrow();
                     invalidate();// call invalidate to refresh the draw
@@ -149,7 +180,8 @@ public class ThirdActivity extends AppCompatActivity {
 
                 case MotionEvent.ACTION_MOVE:
                     path_arrow.reset();
-                    loc_arrow_point_x = X; loc_arrow_point_y = Y;
+                    loc_arrow_point_x = X;
+                    loc_arrow_point_y = Y;
                     angle = Math.atan2(loc_arrow_point_y - btn_loc_y, loc_arrow_point_x - btn_loc_x);
                     drawArrow();
                     invalidate();// call invalidate to refresh the draw
@@ -157,7 +189,8 @@ public class ThirdActivity extends AppCompatActivity {
 
                 case MotionEvent.ACTION_UP:
                     path_arrow.reset();
-                    loc_arrow_point_x = X; loc_arrow_point_y = Y;
+                    loc_arrow_point_x = X;
+                    loc_arrow_point_y = Y;
 
                     // calculates the angle of arrow at release
                     final double angle_start = Math.atan2(loc_arrow_point_y - btn_loc_y, loc_arrow_point_x - btn_loc_x);
@@ -194,9 +227,15 @@ public class ThirdActivity extends AppCompatActivity {
                     });
                     animator.start();
 
-                    // print angle snapped to in degrees to snackbar
-                    double angle_degrees = Math.toDegrees(-angles[idx]);
-                    Snackbar.make(this, "Created force at " + angle_degrees, Snackbar.LENGTH_SHORT).show();
+                    // prints angle snapped to in degrees to snackbar
+                    // All angles are inverted, so this if statement shows 0.0 instead of -0.0
+                    if (angles[idx] == 0.0) {
+                        angle_degrees = Math.toDegrees(angles[idx]);
+                    }else{
+                    angle_degrees = Math.toDegrees(-angles[idx]);
+                    }
+
+                    Snackbar.make(this, "Created force at " + angle_degrees + "\u00B0", Snackbar.LENGTH_SHORT).show();
 
                     break;
             }
