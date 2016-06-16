@@ -4,6 +4,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
@@ -52,6 +53,7 @@ public class ThirdActivity extends AppCompatActivity {
         private double len_arrow_shaft_current;
 
         private float dim_btn_radius;
+        private float dim_btn_radius_buffer;
         private long time_anim_arrow_dur;
 
         private double angle;
@@ -75,7 +77,10 @@ public class ThirdActivity extends AppCompatActivity {
 
         // angles the force arrows snap to
 
-        double angles[] = {-pi, -3 * pi / 4, -pi / 2, -pi / 4, 0, pi / 4, pi / 2, 3 * pi / 4, pi};
+
+        //double angles[] = {-pi, -3 * pi / 4, -pi / 2, -pi / 4, 0, pi / 4, pi / 2, 3 * pi / 4, pi};
+        double angles[] = {-pi, -5*pi/6, -2*pi/3, -pi/2, -pi/3, -pi/6, 0, pi/6, pi/3, pi/2, 2*pi/3, 5*pi/6, pi};
+
 
         // initialize ArrayLists for paths and points
         private ArrayList<Point> pointList = new ArrayList<>();
@@ -93,12 +98,14 @@ public class ThirdActivity extends AppCompatActivity {
 
             // set point locations TODO: import these from database
             // TODO convert these to dp or percentages (note, aspect ratio may not always be same)
-            Point pointOne = new Point(275, 700);
+            Point pointOne = new Point(275, 500);
             Point pointTwo = new Point(730, 700);
             Point pointThree = new Point(1150, 700);
+            Point pointFour = new Point(275, 1200);
             pointList.add(pointOne);
             pointList.add(pointTwo);
             pointList.add(pointThree);
+            pointList.add(pointFour);
 
             paint_points = new Paint();
             btn_loc_x = pointList.get(1).x;
@@ -118,11 +125,12 @@ public class ThirdActivity extends AppCompatActivity {
             len_arrow_shaft = 200;
             len_arrow_head = 60;
             dim_btn_radius = 30f;
+            dim_btn_radius_buffer = 40f;
             time_anim_arrow_dur = 200;
 
             // create Rects from pointList
             for (Point g : pointList) {
-                rectList.add(new Rect(g.x - (int) dim_btn_radius, g.y - (int) dim_btn_radius, g.x + (int) dim_btn_radius, g.y + (int) dim_btn_radius));
+                rectList.add(new Rect(g.x - ((int) dim_btn_radius + (int) dim_btn_radius_buffer), g.y - ((int) dim_btn_radius + (int) dim_btn_radius_buffer), g.x + ((int) dim_btn_radius + (int) dim_btn_radius_buffer), g.y + ((int) dim_btn_radius + (int) dim_btn_radius_buffer)));
             }
 
             // sets style of arrows
@@ -135,8 +143,10 @@ public class ThirdActivity extends AppCompatActivity {
             //TODO set beginning of shaft to transparent so arrow appears to be at surface
             paint_box.setStyle(Paint.Style.FILL);
             paint_box.setStrokeWidth(5f);
-            paint_box.setColor(Color.GREEN);
+            paint_box.setColor(Color.GRAY);
             paint_box.setStyle(Paint.Style.STROKE);
+            paint_box.setPathEffect(new DashPathEffect(new float[]{10, 10, 10, 10}, 0));
+            paint_box.setAlpha(70);
         }
 
         @Override
@@ -144,13 +154,10 @@ public class ThirdActivity extends AppCompatActivity {
         public void onDraw(Canvas canvas) {
             super.onDraw(canvas);
 
-
+            // draws rectangles around points
             for (Rect rect7 : rectList) {
                 canvas.drawRect(rect7, paint_box);
-                ;
             }
-
-            //canvas.drawRect(rect_1, paint_box);
 
             // draws black circle at points in ArrayList pointList
             for (Point ptLst_dots : pointList) {
@@ -183,7 +190,7 @@ public class ThirdActivity extends AppCompatActivity {
                         }
                     }
 
-                    if (clicked_in_button == true) {
+                    if (clicked_in_button) {
                         Log.d(TAG, " ACTION_DOWN if was true");
                         path_arrow = new Path();
                         pathList.add(path_arrow); // <-- Add this line.
@@ -198,7 +205,7 @@ public class ThirdActivity extends AppCompatActivity {
 
                 case MotionEvent.ACTION_MOVE:
                     Log.d(TAG, " ACTION_MOVE: " + clicked_in_button);
-                    if (clicked_in_button == true) {
+                    if (clicked_in_button) {
 
                         path_arrow.reset();
                         loc_arrow_point_x = X;
@@ -211,7 +218,7 @@ public class ThirdActivity extends AppCompatActivity {
 
                 case MotionEvent.ACTION_UP:
                     Log.d(TAG, " ACTION_UP: " + clicked_in_button);
-                    if (clicked_in_button == true) {
+                    if (clicked_in_button) {
                         clicked_in_button = false;
                         path_arrow.reset();
                         loc_arrow_point_x = X;
@@ -255,9 +262,9 @@ public class ThirdActivity extends AppCompatActivity {
                         // prints angle snapped to in degrees to snackbar
                         // All angles are inverted, so this if statement shows 0.0 instead of -0.0
                         if (angles[idx] == 0.0) {
-                            angle_degrees = Math.toDegrees(angles[idx]);
+                            angle_degrees = Math.round(Math.toDegrees(angles[idx]));
                         } else {
-                            angle_degrees = Math.toDegrees(-angles[idx]);
+                            angle_degrees = Math.round(Math.toDegrees(-angles[idx]));
                         }
 
                         Snackbar.make(this, "Created force at " + angle_degrees + "\u00B0", Snackbar.LENGTH_SHORT).show();
@@ -283,16 +290,11 @@ public class ThirdActivity extends AppCompatActivity {
             path_arrow.lineTo(loc_arrow_point_x, loc_arrow_point_y);
             path_arrow.moveTo(loc_arrow_point_x, loc_arrow_point_y);
 
-            // draws arrow head, left and right side
-//            path_arrow.lineTo(loc_arrow_head_left_x, loc_arrow_head_left_y);
-//            path_arrow.moveTo(loc_arrow_point_x, loc_arrow_point_y);
-//            path_arrow.lineTo(loc_arrow_head_right_x, loc_arrow_head_right_y);
-
+            // draws arrow head
             path_arrow.moveTo(loc_arrow_head_left_x, loc_arrow_head_left_y);
             path_arrow.lineTo(loc_arrow_point_x, loc_arrow_point_y);
             path_arrow.lineTo(loc_arrow_head_right_x, loc_arrow_head_right_y);
 
-            //path_arrow.close();
         }
     }
 
