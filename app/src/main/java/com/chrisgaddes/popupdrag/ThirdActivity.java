@@ -11,7 +11,6 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
@@ -54,12 +53,13 @@ public class ThirdActivity extends AppCompatActivity {
         private double len_arrow_shaft_current;
 
         private float dim_btn_radius;
+        private long time_anim_arrow_dur;
 
         private double angle;
-        private double angle2;
-        private double angledif2;
-        private double cdistance;
-        private double distance;
+        private double angle_dif;
+        private double tmp_angle_dist;
+        private double angle_dist;
+        private double arrow_animated_fraction;
 
         private double angle_arrow_head_left;
         private double angle_arrow_head_right;
@@ -67,7 +67,6 @@ public class ThirdActivity extends AppCompatActivity {
         private float loc_arrow_head_left_y;
         private float loc_arrow_head_right_x;
         private float loc_arrow_head_right_y;
-        private float angle3;
 
         double pi = Math.PI;
 
@@ -75,8 +74,8 @@ public class ThirdActivity extends AppCompatActivity {
         double angles[] = {-pi, -3 * pi / 4, -pi / 2, -pi / 4, 0, pi / 4, pi / 2, 3 * pi / 4, pi, 2 * pi};
 
         // initialize ArrayLists for paths and points
-        ArrayList<Point> pointList = new ArrayList<Point>();
-        ArrayList<Path> pathList = new ArrayList<Path>();
+        ArrayList<Point> pointList = new ArrayList<>();
+        ArrayList<Path> pathList = new ArrayList<>();
 
         public DrawArrowsView(Context context) {
             super(context);
@@ -85,6 +84,7 @@ public class ThirdActivity extends AppCompatActivity {
             path_arrow = new Path();
 
             dim_btn_radius = 30f;
+            time_anim_arrow_dur = 200;
 
             Point pointOne = new Point(275, 700);
             Point pointTwo = new Point(730, 700);
@@ -92,7 +92,6 @@ public class ThirdActivity extends AppCompatActivity {
             pointList.add(pointOne);
             pointList.add(pointTwo);
             pointList.add(pointThree);
-
 
             paint_points = new Paint();
             btn_loc_x = pointList.get(1).x;
@@ -120,13 +119,13 @@ public class ThirdActivity extends AppCompatActivity {
             super.onDraw(canvas);
 
             // draws black circle at points in ArrayList pointList
-            for (Point point : pointList) {
-                canvas.drawCircle(point.x, point.y, dim_btn_radius, paint_points);
+            for (Point ptLst_dots : pointList) {
+                canvas.drawCircle(ptLst_dots.x, ptLst_dots.y, dim_btn_radius, paint_points);
             }
 
             // draws arrows
-            for (Path path : pathList) {
-                canvas.drawPath(path, paint_arrow);
+            for (Path pthLst_arrows : pathList) {
+                canvas.drawPath(pthLst_arrows, paint_arrow);
             }
         }
 
@@ -161,76 +160,41 @@ public class ThirdActivity extends AppCompatActivity {
                     loc_arrow_point_x = X;
                     loc_arrow_point_y = Y;
 
+                    // calculates the angle of arrow at release
                     final double angle_start = Math.atan2(loc_arrow_point_y - btn_loc_y, loc_arrow_point_x - btn_loc_x);
-                    Log.d("angle_start = ", String.valueOf(angle_start));
-                    // snap to pi/4 increments
 
-
-
-
-                    distance = Math.abs(angles[0] - angle_start);
-                    Log.d("angles[0] ", String.valueOf(angles[0]));
-                    Log.d("distance ", Float.toString((float) distance));
+                    // snaps arrow to pi/4 increments
+                    angle_dist = Math.abs(angles[0] - angle_start);
                     int idx = 0;
                     for (int c = 1; c < angles.length; c++) {
-                        cdistance = Math.abs(angles[c] - angle_start);
-                        Log.d("cdistance ", String.valueOf(cdistance));
-                        Log.d("angles[c] ", String.valueOf(angles[c]));
-
-                        if (cdistance < distance) {
+                        tmp_angle_dist = Math.abs(angles[c] - angle_start);
+                        if (tmp_angle_dist < angle_dist) {
                             idx = c;
-                            distance = cdistance; // TODO cahnged this to distance!!!
+                            angle_dist = tmp_angle_dist; //
                         }
-                        Log.d("idx ", String.valueOf(idx));
                     }
-                    double angle_snapTo = angles[idx];
-
-                    angledif2 = angle_snapTo - angle_start;
-
-                    Log.d("angle_snapTo ", String.valueOf(angle_snapTo));
-
-                    Log.d("angle = ", String.valueOf(angle));
-
-                    Log.d("angledif2 = ", String.valueOf(angledif2));
+                    angle_dif = angles[idx] - angle_start;
 
                     len_arrow_shaft_start = Math.hypot((loc_arrow_point_x - btn_loc_x), (loc_arrow_point_y - btn_loc_y));
-                    Log.d("len_arrow_s_current = ", String.valueOf(len_arrow_shaft_start));
 
                     ValueAnimator animator = ValueAnimator.ofFloat((float) len_arrow_shaft_start, (float) len_arrow_shaft);
-                    animator.setDuration(100); // TODO remove hard coded animation duration
+                    animator.setDuration(time_anim_arrow_dur);
                     animator.setInterpolator(new OvershootInterpolator());
-
-
                     animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                         public void onAnimationUpdate(ValueAnimator animation) {
-                            double arrow_animated_fraction = animation.getAnimatedFraction();
-
-                            Log.d("arrow_animated_frac = ", String.valueOf(arrow_animated_fraction));
+                            arrow_animated_fraction = animation.getAnimatedFraction();
                             len_arrow_shaft_current = (Float) animation.getAnimatedValue();
-
-                            angle = angle_start + arrow_animated_fraction * angledif2; //TODO fix angle to increase based on incre of animation
-                            Log.d("angle_start = ", String.valueOf(angle_start));
-                            Log.d("angle incre = ", String.valueOf(angle));
-
-
-
-                            Log.d("length_shaft_cur = ", String.valueOf(len_arrow_shaft_current));
+                            angle = angle_start + arrow_animated_fraction * angle_dif;
                             loc_arrow_point_y = (int) (len_arrow_shaft_current * Math.sin(angle) + btn_loc_y);
                             loc_arrow_point_x = (int) (len_arrow_shaft_current * Math.cos(angle) + btn_loc_x);
                             path_arrow.reset();
-
-
-
-                            //Log.d("angle = ", String.valueOf(angle));
-
-                            Log.d("angle right b inv = ", String.valueOf(angle));
                             drawArrow();
                             invalidate();
                         }
                     });
                     animator.start();
 
-                    double angle_degrees = Math.toDegrees(-angle3);
+                    double angle_degrees = Math.toDegrees(-angle);
                     Snackbar.make(this, "Created force at " + angle_degrees, Snackbar.LENGTH_SHORT).show();
 
                     break;
