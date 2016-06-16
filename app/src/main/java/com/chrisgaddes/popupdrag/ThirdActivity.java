@@ -11,6 +11,7 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
@@ -68,6 +69,8 @@ public class ThirdActivity extends AppCompatActivity {
         private float loc_arrow_head_right_x;
         private float loc_arrow_head_right_y;
 
+        private boolean clicked_in_button;
+
         double pi = Math.PI;
 
         // angles the force arrows snap to
@@ -109,6 +112,7 @@ public class ThirdActivity extends AppCompatActivity {
             loc_arrow_head_right_x = btn_loc_x;
             loc_arrow_head_right_y = btn_loc_y;
 
+            clicked_in_button = false;
 
             // sets constants  // TODO: change these constants to dp of f
             len_arrow_shaft = 200;
@@ -119,7 +123,7 @@ public class ThirdActivity extends AppCompatActivity {
             // create Rects from pointList
             for (Point g : pointList) {
                 rectList.add(new Rect(g.x - (int) dim_btn_radius, g.y - (int) dim_btn_radius, g.x + (int) dim_btn_radius, g.y + (int) dim_btn_radius));
-           }
+            }
 
             // sets style of arrows
             paint_arrow.setStyle(Paint.Style.FILL);
@@ -142,7 +146,8 @@ public class ThirdActivity extends AppCompatActivity {
 
 
             for (Rect rect7 : rectList) {
-                canvas.drawRect(rect7, paint_box);;
+                canvas.drawRect(rect7, paint_box);
+                ;
             }
 
             //canvas.drawRect(rect_1, paint_box);
@@ -166,77 +171,97 @@ public class ThirdActivity extends AppCompatActivity {
 
             switch (eventaction) {
                 case MotionEvent.ACTION_DOWN:
+                    Log.d(TAG, " ACTION_DOWN Clicked: " + clicked_in_button);
 
+                    for (Rect rect7 : rectList) {
+                        if (rect7.contains(X, Y)) {
+                            Log.d(TAG, "click contains xy ");
+                            clicked_in_button = true;
 
-                    path_arrow = new Path();
-                    pathList.add(path_arrow); // <-- Add this line.
-                    path_arrow.reset();
-                    loc_arrow_point_x = X;
-                    loc_arrow_point_y = Y;
-                    angle = Math.atan2(loc_arrow_point_y - btn_loc_y, loc_arrow_point_x - btn_loc_x);
-                    drawArrow();
-                    invalidate();// call invalidate to refresh the draw
+                            btn_loc_x = rect7.centerX();
+                            btn_loc_y = rect7.centerY();
+                        }
+                    }
+
+                    if (clicked_in_button == true) {
+                        Log.d(TAG, " ACTION_DOWN if was true");
+                        path_arrow = new Path();
+                        pathList.add(path_arrow); // <-- Add this line.
+                        path_arrow.reset();
+                        loc_arrow_point_x = X;
+                        loc_arrow_point_y = Y;
+                        angle = Math.atan2(loc_arrow_point_y - btn_loc_y, loc_arrow_point_x - btn_loc_x);
+                        drawArrow();
+                        invalidate();// call invalidate to refresh the draw
+                    }
                     break;
 
                 case MotionEvent.ACTION_MOVE:
-                    path_arrow.reset();
-                    loc_arrow_point_x = X;
-                    loc_arrow_point_y = Y;
-                    angle = Math.atan2(loc_arrow_point_y - btn_loc_y, loc_arrow_point_x - btn_loc_x);
-                    drawArrow();
-                    invalidate();// call invalidate to refresh the draw
+                    Log.d(TAG, " ACTION_MOVE: " + clicked_in_button);
+                    if (clicked_in_button == true) {
+
+                        path_arrow.reset();
+                        loc_arrow_point_x = X;
+                        loc_arrow_point_y = Y;
+                        angle = Math.atan2(loc_arrow_point_y - btn_loc_y, loc_arrow_point_x - btn_loc_x);
+                        drawArrow();
+                        invalidate();// call invalidate to refresh the draw
+                    }
                     break;
 
                 case MotionEvent.ACTION_UP:
-                    path_arrow.reset();
-                    loc_arrow_point_x = X;
-                    loc_arrow_point_y = Y;
+                    Log.d(TAG, " ACTION_UP: " + clicked_in_button);
+                    if (clicked_in_button == true) {
+                        clicked_in_button = false;
+                        path_arrow.reset();
+                        loc_arrow_point_x = X;
+                        loc_arrow_point_y = Y;
 
-                    // calculates the angle of arrow at release
-                    final double angle_start = Math.atan2(loc_arrow_point_y - btn_loc_y, loc_arrow_point_x - btn_loc_x);
+                        // calculates the angle of arrow at release
+                        final double angle_start = Math.atan2(loc_arrow_point_y - btn_loc_y, loc_arrow_point_x - btn_loc_x);
 
-                    // snaps arrow to pi/4 increments
-                    angle_dist = Math.abs(angles[0] - angle_start);
-                    int idx = 0;
-                    for (int c = 1; c < angles.length; c++) {
-                        tmp_angle_dist = Math.abs(angles[c] - angle_start);
-                        if (tmp_angle_dist < angle_dist) {
-                            idx = c;
-                            angle_dist = tmp_angle_dist;
+                        // snaps arrow to pi/4 increments
+                        angle_dist = Math.abs(angles[0] - angle_start);
+                        int idx = 0;
+                        for (int c = 1; c < angles.length; c++) {
+                            tmp_angle_dist = Math.abs(angles[c] - angle_start);
+                            if (tmp_angle_dist < angle_dist) {
+                                idx = c;
+                                angle_dist = tmp_angle_dist;
+                            }
                         }
-                    }
-                    angle_dif = angles[idx] - angle_start;
+                        angle_dif = angles[idx] - angle_start;
 
-                    len_arrow_shaft_start = Math.hypot((loc_arrow_point_x - btn_loc_x), (loc_arrow_point_y - btn_loc_y));
+                        len_arrow_shaft_start = Math.hypot((loc_arrow_point_x - btn_loc_x), (loc_arrow_point_y - btn_loc_y));
 
-                    // animates decrease in length and angle
-                    ValueAnimator animator = ValueAnimator.ofFloat((float) len_arrow_shaft_start, (float) len_arrow_shaft);
-                    animator.setDuration(time_anim_arrow_dur);
-                    animator.setInterpolator(new OvershootInterpolator());
-                    animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                        public void onAnimationUpdate(ValueAnimator animation) {
-                            arrow_animated_fraction = animation.getAnimatedFraction();
-                            len_arrow_shaft_current = (Float) animation.getAnimatedValue();
-                            angle = angle_start + arrow_animated_fraction * angle_dif;
-                            loc_arrow_point_y = (int) (len_arrow_shaft_current * Math.sin(angle) + btn_loc_y);
-                            loc_arrow_point_x = (int) (len_arrow_shaft_current * Math.cos(angle) + btn_loc_x);
-                            path_arrow.reset();
-                            drawArrow();
-                            invalidate(); // TODO: Change to invalidate("just the arrow drawn")
+                        // animates decrease in length and angle
+                        ValueAnimator animator = ValueAnimator.ofFloat((float) len_arrow_shaft_start, (float) len_arrow_shaft);
+                        animator.setDuration(time_anim_arrow_dur);
+                        animator.setInterpolator(new OvershootInterpolator());
+                        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                            public void onAnimationUpdate(ValueAnimator animation) {
+                                arrow_animated_fraction = animation.getAnimatedFraction();
+                                len_arrow_shaft_current = (Float) animation.getAnimatedValue();
+                                angle = angle_start + arrow_animated_fraction * angle_dif;
+                                loc_arrow_point_y = (int) (len_arrow_shaft_current * Math.sin(angle) + btn_loc_y);
+                                loc_arrow_point_x = (int) (len_arrow_shaft_current * Math.cos(angle) + btn_loc_x);
+                                path_arrow.reset();
+                                drawArrow();
+                                invalidate(); // TODO: Change to invalidate("just the arrow drawn")
+                            }
+                        });
+                        animator.start();
+
+                        // prints angle snapped to in degrees to snackbar
+                        // All angles are inverted, so this if statement shows 0.0 instead of -0.0
+                        if (angles[idx] == 0.0) {
+                            angle_degrees = Math.toDegrees(angles[idx]);
+                        } else {
+                            angle_degrees = Math.toDegrees(-angles[idx]);
                         }
-                    });
-                    animator.start();
 
-                    // prints angle snapped to in degrees to snackbar
-                    // All angles are inverted, so this if statement shows 0.0 instead of -0.0
-                    if (angles[idx] == 0.0) {
-                        angle_degrees = Math.toDegrees(angles[idx]);
-                    }else{
-                    angle_degrees = Math.toDegrees(-angles[idx]);
+                        Snackbar.make(this, "Created force at " + angle_degrees + "\u00B0", Snackbar.LENGTH_SHORT).show();
                     }
-
-                    Snackbar.make(this, "Created force at " + angle_degrees + "\u00B0", Snackbar.LENGTH_SHORT).show();
-
                     break;
             }
             return true;
